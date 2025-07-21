@@ -1,5 +1,5 @@
 export abstract class BaseComponent<TElement extends Element = Element> {
-  protected element!: TElement;
+  protected element: TElement;
   protected isMounted = false;
 
   abstract render(): TElement;

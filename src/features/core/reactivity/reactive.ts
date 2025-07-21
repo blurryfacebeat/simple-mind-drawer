@@ -7,17 +7,14 @@ export function reactive<T extends object>(target: T): T {
     get(obj, key) {
       if (activeEffect) {
         let depsMap = bucket.get(obj);
-
         if (!depsMap) {
           depsMap = new Map();
           bucket.set(obj, depsMap);
         }
 
         let deps = depsMap.get(key);
-
         if (!deps) {
           deps = new Set();
-
           depsMap.set(key, deps);
         }
 
@@ -40,8 +37,6 @@ export function reactive<T extends object>(target: T): T {
 
 export function effect(fn: () => void) {
   activeEffect = fn;
-
   fn();
-
   activeEffect = null;
 }
