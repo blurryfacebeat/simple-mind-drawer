@@ -118,11 +118,15 @@ export class BlockNode extends BaseComponent<SVGGElement> {
   private initDrag() {
     let offset: Coordinates = { x: 0, y: 0 };
     let isDragging = false;
+    let pending = false;
+
+    let lastX = 0;
+    let lastY = 0;
 
     const onMouseDown = (event: MouseEvent) => {
       if (event.button !== 0) return;
 
-      event.stopPropagation(); // ⛔️ отменяем всплытие к CanvasView
+      event.stopPropagation();
 
       isDragging = true;
       const currentPos = this.state.position;
@@ -137,12 +141,22 @@ export class BlockNode extends BaseComponent<SVGGElement> {
     };
 
     const onMouseMove = (event: MouseEvent) => {
-      if (!isDragging) return;
+      if (!isDragging) {
+        return;
+      }
 
-      const newX = event.clientX - offset.x;
-      const newY = event.clientY - offset.y;
+      lastX = event.clientX - offset.x;
+      lastY = event.clientY - offset.y;
 
-      this.setPosition(newX, newY);
+      if (!pending) {
+        pending = true;
+        requestAnimationFrame(updatePosition);
+      }
+    };
+
+    const updatePosition = () => {
+      this.setPosition(lastX, lastY);
+      pending = false;
     };
 
     const onMouseUp = () => {
